@@ -22,5 +22,12 @@ from django.conf import settings
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('djangoapp/', include('djangoapp.urls')),
-    path('', TemplateView.as_view(template_name="Home.html")),
+    path('', TemplateView.as_view(template_name="Home.html"), name='home'),
+    path('about', TemplateView.as_view(template_name="About.html"), name='about'),
+    path('contact', TemplateView.as_view(template_name="Contact.html"), name='contact'),
+    path('dealers', TemplateView.as_view(template_name="Dealers.html"), name='dealers'),
+    path('dealer/<int:id>', TemplateView.as_view(template_name="Dealer.html"), name='dealer'),
+    path('postreview/<int:id>', TemplateView.as_view(template_name="PostReview.html"), name='postreview'),
+    path('login', TemplateView.as_view(template_name="Login.html"), name='login'),
+    path('register', TemplateView.as_view(template_name="Register.html"), name='register'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

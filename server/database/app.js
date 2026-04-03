@@ -58,17 +58,55 @@ app.get('/fetchReviews/dealer/:id', async (req, res) => {
 
 // Express route to fetch all dealerships
 app.get('/fetchDealers', async (req, res) => {
-//Write your code here
+  try {
+    const documents = await Dealerships.find();
+    res.json(documents);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: 'Error fetching dealerships' });
+  }
 });
 
 // Express route to fetch Dealers by a particular state
 app.get('/fetchDealers/:state', async (req, res) => {
-//Write your code here
+  try {
+    const documents = await Dealerships.find({ state: req.params.state });
+    res.json(documents);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: 'Error fetching dealerships by state' });
+  }
 });
 
 // Express route to fetch dealer by a particular id
 app.get('/fetchDealer/:id', async (req, res) => {
-//Write your code here
+  try {
+    const documents = await Dealerships.find({ id: parseInt(req.params.id) });
+    res.json(documents);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: 'Error fetching dealer by id' });
+  }
+});
+
+// Express route to fetch all car makes and models
+app.get('/fetchCars', async (req, res) => {
+  try {
+    const cars_data = JSON.parse(fs.readFileSync('./data/car_records.json', 'utf8'));
+    const seen = new Set();
+    const cars = [];
+    for (const record of cars_data.car_records) {
+      const key = `${record.car_make}::${record.car_model}`;
+      if (!seen.has(key)) {
+        seen.add(key);
+        cars.push({ CarMake: record.car_make, CarModel: record.car_model });
+      }
+    }
+    res.json(cars);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: 'Error fetching car makes and models' });
+  }
 });
 
 //Express route to insert review
