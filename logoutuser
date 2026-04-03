@@ -1,0 +1,5 @@
+curl -X POST http://localhost:8000/djangoapp/login -H "Content-Type: application/json" -d "{\"userName\":\"testuser\",\"password\":\"password123\"}"
+curl -X GET http://localhost:8000/djangoapp/logout --cookie cookies.txt
+
+Response:
+{"status": "Success", "message": "Logged out"}

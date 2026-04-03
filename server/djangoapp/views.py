@@ -203,11 +203,11 @@ def get_cars(request):
         with open(data_path, 'r', encoding='utf-8') as f:
             data = json.load(f)
             seen = set()
-            for record in data.get('car_records', []):
-                key = (record.get('car_make', ''), record.get('car_model', ''))
+            for record in data.get('cars', []):
+                key = (record.get('make', ''), record.get('model', ''))
                 if key not in seen:
                     seen.add(key)
-                    car_models.append({'CarMake': record.get('car_make', ''), 'CarModel': record.get('car_model', '')})
+                    car_models.append({'CarMake': record.get('make', ''), 'CarModel': record.get('model', '')})
     except Exception as err:
         logger.exception(err)
 

@@ -1,0 +1,12 @@
+Run workflow: Django CI/CD
+
+Step: actions/checkout@v4
+Step: Set up Python
+Step: Install dependencies
+Step: Run Django checks
+
+Command:
+python manage.py check
+
+Output:
+System check identified no issues (0 silenced).
