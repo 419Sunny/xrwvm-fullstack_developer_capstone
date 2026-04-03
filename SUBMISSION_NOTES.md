@@ -48,3 +48,17 @@ c:/Users/emman/Desktop/coder/.venv/Scripts/python.exe manage.py runserver
 ```
 
 Open `http://127.0.0.1:8000/` in a browser.
+
+## Deployment (Render)
+
+The Django app serves dealers, reviews, and car data from JSON under `server/database/data/`, so **one** Python web service is enough (no separate MongoDB service required for this codebase).
+
+1. Push this repository to GitHub (if it is not already).
+2. In [Render](https://render.com), create a **Blueprint** and connect the repo, or create a **Web Service** manually:
+   - **Root directory:** `server`
+   - **Build command:** `pip install -r requirements.txt && python -c "import nltk; nltk.download('vader_lexicon')" && python manage.py collectstatic --noinput && python manage.py migrate --noinput`
+   - **Start command:** `gunicorn djangoproj.wsgi:application --bind 0.0.0.0:$PORT`
+   - **Environment:** add `RENDER` = `true`, `DEBUG` = `False`, and generate a `SECRET_KEY` (or use the values from `render.yaml` if you deploy via Blueprint).
+3. Wait for the first deploy to finish. Open the URL Render shows (for example `https://dealership-review-portal.onrender.com`).
+4. Create an admin user once (Render **Shell**): `python manage.py createsuperuser` — use this for `root` if you need admin screenshots.
+5. Copy **only** the public `https://...` URL into the `deploymentURL` file at the repository root (not a GitHub file link). Retake deployment screenshots with the **browser address bar** visible so the URL is readable.

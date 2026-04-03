@@ -1,0 +1,24 @@
+# Render Blueprint: https://render.com/docs/blueprint-spec
+# After the first deploy, copy the service URL (https://<name>.onrender.com) into deploymentURL at repo root.
+
+version: "1"
+services:
+  - type: web
+    name: dealership-review-portal
+    runtime: python
+    rootDir: server
+    buildCommand: |
+      pip install -r requirements.txt
+      python -c "import nltk; nltk.download('vader_lexicon')"
+      python manage.py collectstatic --noinput
+      python manage.py migrate --noinput
+    startCommand: gunicorn djangoproj.wsgi:application --bind 0.0.0.0:$PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11.9"
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "False"
+      - key: RENDER
+        value: "true"

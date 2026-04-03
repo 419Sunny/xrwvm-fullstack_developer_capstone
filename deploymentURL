@@ -1,3 +1,4 @@
-Deployment URL: NOT DEPLOYED YET
+After you deploy (see SUBMISSION_NOTES.md → Deployment), replace the line below with your live site URL only — for example:
+https://dealership-review-portal.onrender.com
 
-Please update this file with the public deployment URL once the application is deployed.
+YOUR_DEPLOYMENT_URL_HERE
