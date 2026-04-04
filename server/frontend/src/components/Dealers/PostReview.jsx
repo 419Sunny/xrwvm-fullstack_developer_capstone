@@ -32,19 +32,23 @@ const PostReview = () => {
       return;
     }
 
-    let model_split = model.split(" ");
-    let make_chosen = model_split[0];
-    let model_chosen = model_split[1];
+    const spaceIdx = model.indexOf(' ');
+    const make_chosen = spaceIdx === -1 ? model : model.slice(0, spaceIdx);
+    const model_chosen = spaceIdx === -1 ? '' : model.slice(spaceIdx + 1).trim();
+    if (!model_chosen) {
+      alert('Invalid car selection');
+      return;
+    }
 
     let jsoninput = JSON.stringify({
       "name": name,
-      "dealership": id,
+      "dealership": parseInt(id, 10),
       "review": review,
       "purchase": true,
       "purchase_date": date,
       "car_make": make_chosen,
       "car_model": model_chosen,
-      "car_year": year,
+      "car_year": parseInt(year, 10),
     });
 
     console.log(jsoninput);

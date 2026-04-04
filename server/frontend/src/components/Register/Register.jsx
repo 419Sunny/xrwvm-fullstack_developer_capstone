@@ -38,16 +38,51 @@ const Register = () => {
       <div className='register_container'>
         <h1>Register</h1>
         <form onSubmit={handleSubmit} className='register_form'>
-          <label>Username</label>
-          <input type='text' value={username} onChange={(e) => setUsername(e.target.value)} required />
-          <label>First Name</label>
-          <input type='text' value={firstName} onChange={(e) => setFirstName(e.target.value)} required />
-          <label>Last Name</label>
-          <input type='text' value={lastName} onChange={(e) => setLastName(e.target.value)} required />
-          <label>Email</label>
-          <input type='email' value={email} onChange={(e) => setEmail(e.target.value)} required />
-          <label>Password</label>
-          <input type='password' value={password} onChange={(e) => setPassword(e.target.value)} required />
+          <label htmlFor='register-username'>Username</label>
+          <input
+            id='register-username'
+            type='text'
+            placeholder='Username'
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            required
+          />
+          <label htmlFor='register-firstname'>First Name</label>
+          <input
+            id='register-firstname'
+            type='text'
+            placeholder='First Name'
+            value={firstName}
+            onChange={(e) => setFirstName(e.target.value)}
+            required
+          />
+          <label htmlFor='register-lastname'>Last Name</label>
+          <input
+            id='register-lastname'
+            type='text'
+            placeholder='Last Name'
+            value={lastName}
+            onChange={(e) => setLastName(e.target.value)}
+            required
+          />
+          <label htmlFor='register-email'>Email</label>
+          <input
+            id='register-email'
+            type='email'
+            placeholder='Email'
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+          <label htmlFor='register-password'>Password</label>
+          <input
+            id='register-password'
+            type='password'
+            placeholder='Password'
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
           <button type='submit'>Register</button>
         </form>
       </div>

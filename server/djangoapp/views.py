@@ -7,12 +7,32 @@ from django.conf import settings
 import logging
 import json
 import os
+import tempfile
 
 from .restapis import get_request, post_request, analyze_review_sentiments, backend_url
 from .models import CarMake, CarModel
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
+
+
+def _reviews_json_path():
+    return os.path.join(settings.BASE_DIR, 'database', 'data', 'reviews.json')
+
+
+def _atomic_write_json(path, obj):
+    directory = os.path.dirname(path)
+    fd, tmp_path = tempfile.mkstemp(dir=directory, suffix='.tmp')
+    try:
+        with os.fdopen(fd, 'w', encoding='utf-8') as tmp:
+            json.dump(obj, tmp, indent=2)
+        os.replace(tmp_path, path)
+    except Exception:
+        try:
+            os.unlink(tmp_path)
+        except OSError:
+            pass
+        raise
 
 
 @csrf_exempt
@@ -167,23 +187,59 @@ def get_dealer_reviews(request, dealer_id):
 @csrf_exempt
 @require_http_methods(['POST'])
 def add_review(request):
-    # try:
-    #     data = json.loads(request.body)
-    #     endpoint = backend_url.rstrip('/') + '/insert_review'
-    #     result = post_request(endpoint, data)
-    #     if result is None:
-    #         return JsonResponse({'status': 'Failed', 'message': 'Failed to add review'})
-    #     return JsonResponse({'status': 200, 'review': result})
-    # except Exception as err:
-    #     logger.exception(err)
-    #     return JsonResponse({'status': 'Failed', 'message': 'Invalid review payload'})
     try:
         data = json.loads(request.body)
-        # For demo, just return success
-        return JsonResponse({'status': 200, 'review': data})
+        required = (
+            'name', 'dealership', 'review', 'purchase_date',
+            'car_make', 'car_model', 'car_year',
+        )
+        missing = [k for k in required if data.get(k) in (None, '')]
+        if missing:
+            return JsonResponse({
+                'status': 'Failed',
+                'message': f'Missing required fields: {", ".join(missing)}',
+            })
+
+        try:
+            dealership_id = int(data['dealership'])
+            car_year = int(data['car_year'])
+        except (TypeError, ValueError):
+            return JsonResponse({
+                'status': 'Failed',
+                'message': 'dealership and car_year must be integers',
+            })
+
+        path = _reviews_json_path()
+        with open(path, 'r', encoding='utf-8') as f:
+            store = json.load(f)
+        reviews = store.get('reviews', [])
+        next_id = max((r.get('id', 0) for r in reviews), default=0) + 1
+
+        purchase = data.get('purchase', True)
+        if isinstance(purchase, str):
+            purchase = purchase.lower() in ('true', '1', 'yes')
+
+        new_review = {
+            'id': next_id,
+            'name': str(data['name']).strip(),
+            'dealership': dealership_id,
+            'review': str(data['review']).strip(),
+            'purchase': bool(purchase),
+            'purchase_date': str(data['purchase_date']).strip(),
+            'car_make': str(data['car_make']).strip(),
+            'car_model': str(data['car_model']).strip(),
+            'car_year': car_year,
+        }
+        reviews.append(new_review)
+        store['reviews'] = reviews
+        _atomic_write_json(path, store)
+
+        return JsonResponse({'status': 200, 'review': new_review})
+    except json.JSONDecodeError:
+        return JsonResponse({'status': 'Failed', 'message': 'Invalid JSON body'})
     except Exception as err:
         logger.exception(err)
-        return JsonResponse({'status': 'Failed', 'message': 'Invalid review payload'})
+        return JsonResponse({'status': 'Failed', 'message': 'Unable to save review'})
 
 
 @require_http_methods(['GET'])

@@ -1,4 +1,11 @@
-curl -X POST http://localhost:8000/djangoapp/login -H "Content-Type: application/json" -d '{"userName":"testuser","password":"password123"}'
+Task 5: Login via cURL (POST /djangoapp/login)
 
-Response:
+Use a Django user that already exists. Create with: python manage.py createsuperuser, or register in the app. Example: testuser / password123.
+
+--- cURL command ---
+curl -X POST http://127.0.0.1:8000/djangoapp/login -H "Content-Type: application/json" -d "{\"userName\":\"testuser\",\"password\":\"password123\"}"
+
+--- Command output (JSON) ---
 {"userName": "testuser", "first_name": "", "last_name": "", "status": "Authenticated"}
+
+Paste both the command and the output into your course submission. The grader expects POST, Content-Type application/json, JSON body with userName and password, and response with status Authenticated.
